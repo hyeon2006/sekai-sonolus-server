@@ -6,7 +6,7 @@ import {
     Srl,
 } from '@sonolus/core'
 import { BackgroundItemModel } from '@sonolus/express'
-import { databaseEngineItem } from 'sonolus-pjsekai-engine'
+import { databaseEngineItem } from 'sonolus-pjsekai-js'
 import { getCardImagePath, getCardThumbnailPath } from '../../clients/asset/card.js'
 import { config } from '../../config.js'
 import { Repository } from '../../repository/index.js'

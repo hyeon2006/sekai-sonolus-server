@@ -1,5 +1,5 @@
 import { Text } from '@sonolus/core'
-import { databaseEngineItem } from 'sonolus-pjsekai-engine'
+import { databaseEngineItem } from 'sonolus-pjsekai-js'
 import { config } from '../../config.js'
 import { sonolus } from '../index.js'
 import { resolveEngineResource } from '../utils/engine.js'

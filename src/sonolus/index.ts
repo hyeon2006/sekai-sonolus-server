@@ -13,6 +13,8 @@ import { installPack } from './pack/index.js'
 import { installPlaylist, updatePlaylist } from './playlist/index.js'
 import { playlistSearches } from './playlist/search.js'
 import { installPost } from './post/index.js'
+import { installSkin } from './skin/index.js'
+import { skinSearches } from './skin/search.js'
 
 export const sonolus = new Sonolus({
     address: config.sonolus.address,
@@ -30,14 +32,19 @@ export const sonolus = new Sonolus({
     configuration: {
         options: configurationOptions,
     },
+    skin: {
+        searches: skinSearches,
+    },
 })
 
+installSkin()
 installPack()
 installInfo()
 installPost()
 installPlaylist()
 installLevel()
 installBackground()
+installSkin()
 installEngine()
 
 export const updateSonolus = (repository: Repository) => {
