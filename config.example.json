@@ -1,9 +1,5 @@
 {
     "port": 8080,
-    "https": {
-        "key": "",
-        "cert": ""
-    },
     "verbose": true,
     "updateInterval": 600000,
     "sonolus": {
@@ -11,8 +7,7 @@
         "basePath": "/",
         "address": "https://my-domain.com",
         "fallbackLocale": "ja",
-        "banner1Path": "",
-        "banner2Path": "",
+        "bannerPath": "",
         "packPath": "",
         "post": {
             "info": {
