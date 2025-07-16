@@ -15,7 +15,8 @@ const configSchema = Type.Object({
         basePath: Type.String(),
         address: Type.String(),
         fallbackLocale: Type.String(),
-        bannerPath: Type.String(),
+        banner1Path: Type.String(),
+        banner2Path: Type.String(),
         packPath: Type.String(),
         post: Type.Object({
             info: Type.Object({

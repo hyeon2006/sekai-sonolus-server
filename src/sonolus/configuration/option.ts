@@ -11,6 +11,28 @@ export const configurationOptions = {
             card: { title: {}, def: false },
         },
     },
+    banner: {
+        name: {
+            en: 'Banner Image',
+            ko: '배너 이미지',
+        },
+        required: true,
+        type: 'select',
+        def: 'bg2',
+        values: {
+            bg1: { title: '3rd' },
+            bg2: { title: '4th' },
+        },
+    },
+    usingTranslation: {
+        name: {
+            en: 'This is the setting for the `Translation version (Korean)` option on the Sekai Korean server.\n It does not work in languages ​​other than Korean.',
+            ko: '번역 버전(한국어)',
+        },
+        required: false,
+        type: 'toggle',
+        def: true,
+    },
 } satisfies ServerOptionsModel
 
 export const updateConfigurationOptions = (repository: Repository) => {
