@@ -1,3 +1,5 @@
+import { LocalizationText } from '@sonolus/core'
+import { MasterMusicInfo } from '../../clients/master/music.js'
 import { CharacterId } from '../../repository/character.js'
 
 declare module '@sonolus/express' {
@@ -7,6 +9,11 @@ declare module '@sonolus/express' {
             musicVocalTypes: Set<string>
             characterIds: Set<CharacterId>
             publishedAt: number
+            infos?: MasterMusicInfo[]
+            lyricist: LocalizationText
+            composer: LocalizationText
+            arranger: LocalizationText
+            keywords: string
         }
     }
 }

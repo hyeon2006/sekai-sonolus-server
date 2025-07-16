@@ -3,11 +3,27 @@ import { LevelItemModel } from '@sonolus/express'
 import { randomize } from '../../utils/math.js'
 import { sonolus } from '../index.js'
 import { nonEmpty } from '../utils/section.js'
+import { translateLevel, translateLevels } from './translate.js'
 
 export const installLevelDetails = () => {
-    sonolus.level.detailsHandler = ({ itemName }) => {
-        const item = sonolus.level.items.find(({ name }) => name === itemName)
-        if (!item) return 404
+    sonolus.level.detailsHandler = ({ itemName, options: { usingTranslation } }) => {
+        const baseItem = sonolus.level.items.find(({ name }) => name === itemName)
+        if (!baseItem) return 404
+
+        const item = usingTranslation ? translateLevel(baseItem) : baseItem
+
+        const sections = [
+            getOtherDifficulties(baseItem),
+            getOtherVersions(baseItem),
+            getSameArtists(baseItem),
+            getRandom(baseItem),
+        ].map((section) => {
+            if (!usingTranslation) return section
+            return {
+                ...section,
+                items: translateLevels(section.items),
+            }
+        })
 
         return {
             item,
@@ -15,12 +31,7 @@ export const installLevelDetails = () => {
             actions: {},
             hasCommunity: false,
             leaderboards: [],
-            sections: [
-                getOtherDifficulties(item),
-                getOtherVersions(item),
-                getSameArtists(item),
-                getRandom(item),
-            ].filter(nonEmpty),
+            sections: sections.filter(nonEmpty),
         }
     }
 }

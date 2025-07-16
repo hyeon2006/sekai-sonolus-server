@@ -3,10 +3,15 @@ import { randomize } from '../../utils/math.js'
 import { sonolus } from '../index.js'
 import { hideSpoilersFromPlaylists } from '../utils/spoiler.js'
 import { playlistSearches } from './search.js'
+import { translatePlaylists } from './translate.js'
 
 export const installPlaylistInfo = () => {
-    sonolus.playlist.infoHandler = ({ options: { spoilers } }) => {
-        const filteredPlaylists = hideSpoilersFromPlaylists(spoilers.music, sonolus.playlist.items)
+    sonolus.playlist.infoHandler = ({ options: { spoilers, usingTranslation } }) => {
+        let processedPlaylists = hideSpoilersFromPlaylists(spoilers.music, sonolus.playlist.items)
+
+        if (usingTranslation) {
+            processedPlaylists = translatePlaylists(processedPlaylists)
+        }
 
         return {
             searches: playlistSearches,
@@ -15,12 +20,12 @@ export const installPlaylistInfo = () => {
                     title: { en: Text.Random },
                     icon: Icon.Shuffle,
                     itemType: 'playlist',
-                    items: randomize(filteredPlaylists, 5),
+                    items: randomize(processedPlaylists, 5),
                 },
                 {
                     title: { en: Text.Newest },
                     itemType: 'playlist',
-                    items: filteredPlaylists.slice(0, 5),
+                    items: processedPlaylists.slice(0, 5),
                 },
             ],
             banner: sonolus.banner,

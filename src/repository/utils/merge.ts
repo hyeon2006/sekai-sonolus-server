@@ -19,15 +19,27 @@ export const merge = <T extends object, PK extends keyof T, K extends keyof T>(
         for (const item of items) {
             const id = item[primaryKey] as T[PK] & PropertyKey
 
+            const baseItem: Partial<T> = { ...item }
+            for (const key of keys) {
+                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                delete baseItem[key]
+            }
+
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            result[id] ??= {
-                ...item,
-                ...fromEntries(keys.map((key) => [key, {}])),
-                server,
-            } as never
+            if (!result[id]) {
+                result[id] = {
+                    ...item,
+                    ...fromEntries(keys.map((key) => [key, {}])),
+                    server,
+                } as never
+            } else {
+                result[id] = { ...baseItem, ...result[id] }
+            }
 
             for (const key of keys) {
-                result[id][key][server] = item[key]
+                if (item[key] !== undefined) {
+                    result[id][key][server] = item[key]
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import { LevelItemModel } from '@sonolus/express'
-import { databaseEngineItem } from 'sonolus-pjsekai-engine'
+import { databaseEngineItem } from 'sonolus-pjsekai-js'
 import {
     getMusicBgmPath,
     getMusicChartPath,
@@ -50,18 +51,20 @@ export const updateLevelItems = (repository: Repository) => {
             ({ musicId }) => musicId === music.id,
         )
 
-        const description = format(descriptionTemplate, [
-            music.lyricist,
-            music.composer,
-            music.arranger,
-            { ja: music.keywords },
-        ])
-
         const cover = asset(music.server, getMusicCoverPath(music.assetbundleName))
 
         for (const musicVocal of musicVocals) {
-            const musicVocalTypeTitle = repository.musicVocalTypes[musicVocal.musicVocalType]
-                ?.title ?? { en: musicVocal.musicVocalType }
+            const vocalTypeKey =
+                musicVocal.caption.ja ||
+                musicVocal.caption.en ||
+                musicVocal.caption.ko ||
+                musicVocal.caption.zht ||
+                musicVocal.assetbundleName
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const musicVocalTypeTitle =
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                repository.musicVocalTypes[vocalTypeKey]?.title ?? musicVocal.caption
 
             const bgm = asset(musicVocal.server, getMusicBgmPath(musicVocal.assetbundleName))
             if (!repository.whitelist.has(bgm.url)) continue
@@ -80,20 +83,32 @@ export const updateLevelItems = (repository: Repository) => {
                 .map((characterId) => repository.characters[characterId])
                 .filter(notUndefined)
 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const artists = characters.length
+                ? join(
+                      characterSeparator,
+                      characters.map((character) => character.title),
+                  )
+                : musicVocalTypeTitle
+
+            const description = format(descriptionTemplate, [
+                music.lyricist,
+                music.composer,
+                music.arranger,
+                { ja: music.keywords },
+            ])
+
             levels.push({
                 name,
                 version: 1,
                 rating: musicDifficulty.playLevel,
                 title: music.title,
-                artists: characters.length
-                    ? join(
-                          characterSeparator,
-                          characters.map((character) => character.title),
-                      )
-                    : musicVocalTypeTitle,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                artists,
                 author: databaseEngineItem.subtitle,
                 tags: [
                     { title: difficulties[musicDifficulty.musicDifficulty].title },
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     { title: musicVocalTypeTitle },
                 ],
                 description,
@@ -110,11 +125,17 @@ export const updateLevelItems = (repository: Repository) => {
                     musicId: music.id,
                     musicVocalId: musicVocal.id,
                     musicVocalType: musicVocal.musicVocalType,
+                    vocalTypeKey: vocalTypeKey,
                     publishedAt: music.publishedAt,
                     characterIds: [...characterIds].sort(),
                     difficulty: musicDifficulty.musicDifficulty,
                     fillerSec: music.fillerSec,
-                    server: musicDifficulty.server,
+                    server: musicVocal.server,
+                    infos: music.infos,
+                    lyricist: music.lyricist,
+                    composer: music.composer,
+                    arranger: music.arranger,
+                    keywords: music.keywords,
                 },
             })
         }

@@ -1,19 +1,27 @@
 import { Text } from '@sonolus/core'
 import { filterPlaylists, paginateItems } from '@sonolus/express'
-import { databaseEngineItem } from 'sonolus-pjsekai-engine'
+import { databaseEngineItem } from 'sonolus-pjsekai-js'
 import { config } from '../../config.js'
 import { sonolus } from '../index.js'
 import { randomizeItems } from '../utils/list.js'
 import { hideSpoilersFromPlaylists } from '../utils/spoiler.js'
 import { playlistSearches } from './search.js'
+import { translatePlaylists } from './translate.js'
 
 export const installPlaylistList = () => {
-    sonolus.playlist.listHandler = ({ search: { type, options }, page, options: { spoilers } }) => {
-        const filteredPlaylists = hideSpoilersFromPlaylists(spoilers.music, sonolus.playlist.items)
+    sonolus.playlist.listHandler = ({
+        search: { type, options },
+        page,
+        options: { spoilers, usingTranslation },
+    }) => {
+        const basePlaylists = hideSpoilersFromPlaylists(spoilers.music, sonolus.playlist.items)
+        const processedPlaylists = usingTranslation
+            ? translatePlaylists(basePlaylists)
+            : basePlaylists
 
         if (type === 'quick')
             return {
-                ...paginateItems(filterPlaylists(filteredPlaylists, options.keywords), page),
+                ...paginateItems(filterPlaylists(processedPlaylists, options.keywords), page),
                 searches: playlistSearches,
             }
 
@@ -33,6 +41,10 @@ export const installPlaylistList = () => {
                             musicVocalTypes: new Set(),
                             characterIds: new Set(),
                             publishedAt: Date.now(),
+                            lyricist: {},
+                            composer: {},
+                            arranger: {},
+                            keywords: '',
                         },
                     },
                 ],
@@ -40,7 +52,7 @@ export const installPlaylistList = () => {
             }
 
         const items = filterPlaylists(
-            filteredPlaylists.filter(
+            processedPlaylists.filter(
                 ({ meta }) =>
                     (!meta.characterIds.size ||
                         [...meta.characterIds].some(

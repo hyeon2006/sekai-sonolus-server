@@ -4,9 +4,10 @@ import { randomize } from '../../utils/math.js'
 import { sonolus } from '../index.js'
 import { hideSpoilers } from '../utils/spoiler.js'
 import { levelSearches } from './search.js'
+import { translateLevels } from './translate.js'
 
 export const installLevelInfo = () => {
-    sonolus.level.infoHandler = ({ options: { spoilers } }) => {
+    sonolus.level.infoHandler = ({ options: { spoilers, usingTranslation } }) => {
         const randomLevels: Record<string, LevelItemModel> = {}
 
         const newestMusicIds = new Set<number>()
@@ -22,6 +23,14 @@ export const installLevelInfo = () => {
             newestLevels.push(level)
         }
 
+        let randomItems = randomize(Object.values(randomLevels), 5)
+        let newestItems = newestLevels
+
+        if (usingTranslation) {
+            randomItems = translateLevels(randomItems)
+            newestItems = translateLevels(newestItems)
+        }
+
         return {
             searches: levelSearches,
             sections: [
@@ -29,12 +38,12 @@ export const installLevelInfo = () => {
                     title: { en: Text.Random },
                     icon: Icon.Shuffle,
                     itemType: 'level',
-                    items: randomize(Object.values(randomLevels), 5),
+                    items: randomItems,
                 },
                 {
                     title: { en: Text.Newest },
                     itemType: 'level',
-                    items: newestLevels,
+                    items: newestItems,
                 },
             ],
             banner: sonolus.banner,

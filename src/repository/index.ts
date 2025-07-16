@@ -41,6 +41,7 @@ export const fetchRepository = async () => {
         musicVocalTypes: getMusicVocalTypes(data),
         musicDifficulties,
         whitelist,
+        musicVocalTypeCaptions: data.musicVocalTypeCaptions,
     }
 }
 

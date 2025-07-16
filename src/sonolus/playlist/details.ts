@@ -1,14 +1,15 @@
 import { Icon, Text } from '@sonolus/core'
 import { PlaylistItemModel } from '@sonolus/express'
-import { databaseEngineItem } from 'sonolus-pjsekai-engine'
+import { databaseEngineItem } from 'sonolus-pjsekai-js'
 import { config } from '../../config.js'
 import { randomize } from '../../utils/math.js'
 import { sonolus } from '../index.js'
 import { nonEmpty } from '../utils/section.js'
 import { hideSpoilers, hideSpoilersFromPlaylist } from '../utils/spoiler.js'
+import { translatePlaylist, translatePlaylists } from './translate.js'
 
 export const installPlaylistDetails = () => {
-    sonolus.playlist.detailsHandler = ({ itemName, options: { spoilers } }) => {
+    sonolus.playlist.detailsHandler = ({ itemName, options: { spoilers, usingTranslation } }) => {
         if (itemName.startsWith(`${config.sonolus.prefix}-random-`)) {
             const [, , , min, max] = itemName.split('-')
             const minRating = +(min ?? '') || 0
@@ -32,6 +33,10 @@ export const installPlaylistDetails = () => {
                         musicVocalTypes: new Set(),
                         characterIds: new Set(),
                         publishedAt: Date.now(),
+                        lyricist: {},
+                        composer: {},
+                        arranger: {},
+                        keywords: '',
                     },
                 },
                 actions: {},
@@ -41,8 +46,17 @@ export const installPlaylistDetails = () => {
             }
         }
 
-        const item = sonolus.playlist.items.find(({ name }) => name === itemName)
+        let item = sonolus.playlist.items.find(({ name }) => name === itemName)
         if (!item) return 404
+
+        if (usingTranslation) {
+            item = translatePlaylist(item)
+        }
+
+        const randomSection = getRandom(item)
+        if (usingTranslation) {
+            randomSection.items = translatePlaylists(randomSection.items)
+        }
 
         return {
             item: hideSpoilersFromPlaylist(spoilers.music, item),

@@ -1,7 +1,7 @@
 import { compress } from '@sonolus/core'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { susToUSC, uscToLevelData, version } from 'sonolus-pjsekai-engine'
+import { susToUSC, uscToLevelData, version } from 'sonolus-pjsekai-js'
 import { fetchMusicChart } from '../../clients/asset/music.js'
 import { MasterDifficulty } from '../../clients/master/difficulty.js'
 import { Server } from '../../clients/master/server.js'
