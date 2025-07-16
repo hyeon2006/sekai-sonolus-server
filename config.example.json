@@ -7,7 +7,8 @@
         "basePath": "/",
         "address": "https://my-domain.com",
         "fallbackLocale": "ja",
-        "bannerPath": "",
+        "banner1Path": "",
+        "banner2Path": "",
         "packPath": "",
         "post": {
             "info": {

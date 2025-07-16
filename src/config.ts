@@ -8,10 +8,6 @@ const localizationTextSchema = Type.Record(Type.String(), Type.String())
 
 const configSchema = Type.Object({
     port: Type.Number(),
-    https: Type.Object({
-        key: Type.String(),
-        cert: Type.String(),
-    }),
     verbose: Type.Boolean(),
     updateInterval: Type.Number(),
     sonolus: Type.Object({
