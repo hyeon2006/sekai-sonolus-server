@@ -38,7 +38,7 @@ export const merge = <T extends object, PK extends keyof T, K extends keyof T>(
 
             for (const key of keys) {
                 if (item[key] !== undefined) {
-                    result[id][key][server] = item[key]
+                    result[id][key][server] ??= item[key]
                 }
             }
         }
